@@ -43,7 +43,7 @@ def main():
     else:
         raise ValueError("No data source specified")
     
-                                train_size = int(len(data) * config['pycaret']['train_size'])
+    train_size = int(len(data) * config['pycaret']['train_size'])
     train_data = data[:train_size]
     test_data = data[train_size:]
     
