@@ -3,7 +3,7 @@
 A beginner's guide to automated time series forecasting with PyCaret
 ### PyCaret for Low-Code Time Series Forecasting in Python
 #### A beginner's guide to automated time series forecasting with PyCaret
-**PyCaret** is a low-code machine learning library that simplifies the process of building and deploying machine learning models. With the release of its time series module, PyCaret makes time series forecasting more accessible, offering robust tools for automated model selection, tuning, and evaluation.
+PyCaret is a low-code machine learning library that simplifies the process of building and deploying machine learning models. With the release of its time series module, PyCaret makes time series forecasting more accessible, offering robust tools for automated model selection, tuning, and evaluation.
 
 PyCaret is a single framework for automation, model management, and deployment. It supports traditional statistical models like ARIMA and modern machine learning algorithms such as LightGBM and XGBoost.
 

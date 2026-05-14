@@ -32,10 +32,10 @@ Edit `config.yaml` to customize:
 ## PyCaret Features
 
 PyCaret provides:
-- **Low-code interface**: Minimal code for complex workflows
-- **Model comparison**: Automatically compare multiple models
-- **Auto-tuning**: Automatic hyperparameter tuning
-- **Multiple algorithms**: ARIMA, Prophet, Exponential Smoothing, etc.
+- Low-code interface: Minimal code for complex workflows
+- Model comparison: Automatically compare multiple models
+- Auto-tuning: Automatic hyperparameter tuning
+- Multiple algorithms: ARIMA, Prophet, Exponential Smoothing, etc.
 
 ## Caveats
 
