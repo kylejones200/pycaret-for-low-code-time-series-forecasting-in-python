@@ -3,7 +3,6 @@
 import numpy as np
 import pandas as pd
 from pathlib import Path
-from typing import Dict
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import matplotlib.pyplot as plt
 import logging
@@ -18,7 +17,7 @@ def prepare_time_series_data(df: pd.DataFrame, date_col: str, value_col: str) ->
     df = df.set_index(date_col)
     return df[value_col]
 
-def calculate_forecast_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> Dict:
+def calculate_forecast_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
     """Calculate forecast error metrics."""
     return {
         'mse': mean_squared_error(y_true, y_pred),
