@@ -417,71 +417,6 @@ class CrossValidationVisualizer:
         plt.tight_layout()
         return fig
 
-class FourierVisualizer:
-
-    def __init__(self):
-        self.t = np.linspace(0, 10, 1000)
-        self.dt = self.t[1] - self.t[0]
-        self.f1, self.f2 = (1.0, 2.5)
-        self.signal = np.sin(2 * np.pi * self.f1 * self.t) + 0.5 * np.sin(2 * np.pi * self.f2 * self.t) + 0.2 * np.random.randn(len(self.t))
-        self.fft_vals = np.fft.fft(self.signal)
-        self.freqs = np.fft.fftfreq(len(self.t), self.dt)
-        self.reconstruct_signals()
-
-    def reconstruct_signals(self):
-        """Reconstruct signals with different numbers of frequencies"""
-        self.reconstructions = []
-        sorted_indices = np.argsort(np.abs(self.fft_vals))[::-1]
-        for n_freqs in range(1, 51):
-            fft_filtered = np.zeros_like(self.fft_vals, dtype=complex)
-            fft_filtered[sorted_indices[:n_freqs]] = self.fft_vals[sorted_indices[:n_freqs]]
-            fft_filtered[sorted_indices[-n_freqs + 1:]] = self.fft_vals[sorted_indices[-n_freqs + 1:]]
-            reconstructed = np.fft.ifft(fft_filtered).real
-            self.reconstructions.append(reconstructed)
-
-    def create_animation(self):
-        fig = plt.figure(figsize=(15, 10))
-        gs = fig.add_gridspec(3, 2)
-        ax1 = fig.add_subplot(gs[0, :])
-        ax2 = fig.add_subplot(gs[1, 0])
-        ax3 = fig.add_subplot(gs[1, 1])
-        ax4 = fig.add_subplot(gs[2, :])
-
-        def animate(frame):
-            for ax in [ax1, ax2, ax3, ax4]:
-                ax.clear()
-            window = 200
-            start_idx = frame % (len(self.t) - window)
-            end_idx = start_idx + window
-            ax1.plot(self.t[start_idx:end_idx], self.signal[start_idx:end_idx], 'b-', label='Original Signal')
-            ax1.set_title('Time Domain Signal')
-            ax1.set_xlabel('Time')
-            ax1.set_ylabel('Amplitude')
-            ax1.legend()
-            ax1.grid(True)
-            positive_freq_mask = self.freqs >= 0
-            ax2.plot(self.freqs[positive_freq_mask], np.abs(self.fft_vals)[positive_freq_mask], 'r-', label='Magnitude Spectrum')
-            ax2.set_title('Frequency Spectrum')
-            ax2.set_xlabel('Frequency (Hz)')
-            ax2.set_ylabel('Magnitude')
-            ax2.grid(True)
-            ax3.plot(self.freqs[positive_freq_mask], np.angle(self.fft_vals)[positive_freq_mask], 'g-', label='Phase Spectrum')
-            ax3.set_title('Phase Spectrum')
-            ax3.set_xlabel('Frequency (Hz)')
-            ax3.set_ylabel('Phase (radians)')
-            ax3.grid(True)
-            reconstruction_idx = min(frame // 2, len(self.reconstructions) - 1)
-            ax4.plot(self.t[start_idx:end_idx], self.signal[start_idx:end_idx], 'b-', alpha=0.5, label='Original')
-            ax4.plot(self.t[start_idx:end_idx], self.reconstructions[reconstruction_idx][start_idx:end_idx], 'r-', label=f'Reconstruction\n({reconstruction_idx + 1} frequencies)')
-            ax4.set_title('Signal Reconstruction')
-            ax4.set_xlabel('Time')
-            ax4.set_ylabel('Amplitude')
-            ax4.legend()
-            ax4.grid(True)
-            plt.tight_layout()
-        anim = FuncAnimation(fig, animate, frames=200, interval=100, repeat=True)
-        return anim
-
 class KalmanFilterVisualizer:
 
     def __init__(self):
@@ -607,8 +542,7 @@ class SVARVisualizer:
         for t in range(self.irf_periods):
             total_var = np.sum(cum_effects[t], axis=1)
             for i in range(n_vars):
-                if total_var[i] > 0:
-                    fevd[t, i, :] = cum_effects[t, i, :] / total_var[i]
+                fevd[t, i, :] = cum_effects[t, i, :] / total_var[i]
         return fevd
 
     def create_animation(self):
@@ -826,7 +760,11 @@ def plot_cv_scheme(cv_type='expanding', n_splits=4):
     return fig
 
 
-def main() -> None:
+def notebook_step_001() -> None:
+    'Generated from Jupyter notebook: animations and pycaret\n\nMagics and shell lines are commented out. Run with a normal Python interpreter.'
+
+
+def assuming_you_have_your_taxi_data_in_a_dataframe() -> None:
     dates = pd.date_range(start='2024-01-15', end='2024-01-29', freq='D')
 
     np.random.seed(42)
@@ -863,6 +801,8 @@ def main() -> None:
 
     plt.show()
 
+
+def visualizing_time_series_cross_validation_methods() -> None:
     cv_viz = CrossValidationVisualizer(data_length=200)
 
     expanding_window_fig = cv_viz.plot_expanding_window(n_splits=4)
@@ -890,6 +830,8 @@ def main() -> None:
         fig.savefig(f'{scheme}_scheme.png', bbox_inches='tight', dpi=300)
         plt.close()
 
+
+def generate_sample_time_series_data() -> None:
     cv_viz = CrossValidationVisualizer(data_length=200)
 
     expanding_window_fig = cv_viz.plot_expanding_window(n_splits=3)
@@ -910,6 +852,8 @@ def main() -> None:
 
     plt.show()
 
+
+def plot_full_dataset() -> None:
     cv_viz = CrossValidationVisualizer(data_length=200)
 
     fig1 = cv_viz.plot_expanding_window(n_splits=3)
@@ -926,6 +870,8 @@ def main() -> None:
 
     plt.show()
 
+
+def plot_full_dataset_2() -> None:
     cv_anim = AnimatedCrossValidation(data_length=200)
 
     expanding_anim = cv_anim.create_expanding_window_animation(n_splits=3)
@@ -942,6 +888,8 @@ def main() -> None:
 
     plt.show()
 
+
+def generate_two_related_time_series() -> None:
     visualizer = CausalInferenceVisualizer()
 
     anim = visualizer.create_animation()
@@ -950,6 +898,8 @@ def main() -> None:
 
     plt.close()
 
+
+def generate_true_trajectory() -> None:
     visualizer = KalmanFilterVisualizer()
 
     anim = visualizer.create_animation()
@@ -958,6 +908,8 @@ def main() -> None:
 
     plt.close()
 
+
+def set_random_seed_for_reproducibility() -> None:
     '\nworks\n'
 
     np.random.seed(42)
@@ -1010,8 +962,10 @@ def main() -> None:
 
     plt.close(fig)
 
+
+def don_t_use_notebook_markdown() -> None:
     """
-    don't use
+    # don't use  # notebook markdown
     """
 
     import numpy as np
@@ -1108,14 +1062,7 @@ def main() -> None:
                 ax3.set_title('Fourier Components')
                 ax3.legend()
 
-               """ # Plot 4: Feature importance (simulated)
-                features = ['rolling_mean_7', 'rolling_std_7', 'lag_1', 'lag_7',
-                           'fourier_sin', 'fourier_cos']
-                importance = np.abs(np.random.normal(size=len(features)))  # Simulated importance
-                ax4.barh(features, importance)
-                ax4.set_title('Feature Importance')
-
-                plt.tight_layout()"""
+                # Plot 4: Feature importance (simulated) — disabled in animation
 
             anim = FuncAnimation(fig, animate,
                                frames=len(self.df)-self.window,
@@ -1128,6 +1075,8 @@ def main() -> None:
     anim.save('pytimetk_features.gif', writer='pillow', fps=30)
     plt.close()
 
+
+def generate_sample_data() -> None:
     visualizer = TimeSeriesFeatureVisualizer()
 
     anim = visualizer.create_animation()
@@ -1136,6 +1085,8 @@ def main() -> None:
 
     plt.close()
 
+
+def generate_sample_data_2() -> None:
     import numpy as np
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation
@@ -1173,8 +1124,7 @@ def main() -> None:
                 ax1.scatter(self.data, np.zeros_like(self.data),
                            color='blue', s=100, label='Data points')
                 ax1.axvline(self.mean, color='red', linestyle='--',
-                           label=f'
-    Mean = {self.mean:.2f}')
+                           label=f'Mean = {self.mean:.2f}')
 
                 # Animate deviations
                 current_point = frame % len(self.data)
@@ -1235,6 +1185,8 @@ def main() -> None:
     anim.save('variance_std_dev.gif', writer='pillow', fps=2)
     plt.close()
 
+
+def generate_larger_sample_data() -> None:
     import numpy as np
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation
@@ -1308,8 +1260,7 @@ def main() -> None:
                                            label=f'{i}σ = {i*68.27:.1f}%')
 
                     ax1.axvline(current_mean, color='red', linestyle='--',
-                              label=f'
-    Mean = {current_mean:.2f}')
+                              label=f'Mean = {current_mean:.2f}')
                     ax1.set_title(f'Distribution of {len(current_data)} Data Points')
                     ax1.legend()
 
@@ -1348,6 +1299,8 @@ def main() -> None:
     anim.save('variance_std_dev.gif', writer='pillow', fps=5)
     plt.close()
 
+
+def generate_true_trajectory_2() -> None:
     visualizer = KalmanFilterVisualizer()
 
     anim = visualizer.create_animation()
@@ -1356,6 +1309,8 @@ def main() -> None:
 
     plt.close()
 
+
+def generate_true_trajectory_3() -> None:
     visualizer = KalmanFilterVisualizer()
 
     anim = visualizer.create_animation()
@@ -1364,6 +1319,8 @@ def main() -> None:
 
     plt.close()
 
+
+def generate_synthetic_time_series_data_for_differen() -> None:
     visualizer = TSClassificationVisualizer()
 
     anim = visualizer.create_animation()
@@ -1372,6 +1329,8 @@ def main() -> None:
 
     plt.close()
 
+
+def parameters() -> None:
     visualizer = ConfidenceIntervalVisualizer()
 
     anim = visualizer.create_animation()
@@ -1380,14 +1339,123 @@ def main() -> None:
 
     plt.close()
 
+
+def time_domain_parameters() -> None:
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib.animation import FuncAnimation
+
+    class FourierVisualizer:
+        def __init__(self):
+            # Time domain parameters
+            self.t = np.linspace(0, 10, 1000)
+            self.dt = self.t[1] - self.t[0]
+
+            # Generate composite signal
+            self.f1, self.f2 = 1.0, 2.5  # frequencies
+            self.signal = (np.sin(2*np.pi*self.f1*self.t) +
+                          0.5*np.sin(2*np.pi*self.f2*self.t) +
+                          0.2*np.random.randn(len(self.t)))
+
+            # Compute FFT
+            self.fft_vals = np.fft.fft(self.signal)
+            self.freqs = np.fft.fftfreq(len(self.t), self.dt)
+
+            # Store reconstructed signals
+            self.reconstruct_signals()
+
+        def reconstruct_signals(self):
+            """Reconstruct signals with different numbers of frequencies"""
+            self.reconstructions = []
+            sorted_indices = np.argsort(np.abs(self.fft_vals))[::-1]
+
+            for n_freqs in range(1, 51):
+                fft_filtered = np.zeros_like(self.fft_vals, dtype=complex)
+                fft_filtered[sorted_indices[:n_freqs]] = self.fft_vals[sorted_indices[:n_freqs]]
+                fft_filtered[sorted_indices[-n_freqs + 1 :]] = self.fft_vals[
+                    sorted_indices[-n_freqs + 1 :]
+                ]
+                reconstructed = np.fft.ifft(fft_filtered).real
+                self.reconstructions.append(reconstructed)
+
+        def create_animation(self):
+            fig = plt.figure(figsize=(15, 10))
+            gs = fig.add_gridspec(3, 2)
+
+            # Create subplots
+            ax1 = fig.add_subplot(gs[0, :])    # Original signal
+            ax2 = fig.add_subplot(gs[1, 0])    # Frequency domain
+            ax3 = fig.add_subplot(gs[1, 1])    # Phase spectrum
+            ax4 = fig.add_subplot(gs[2, :])    # Reconstruction
+
+            def animate(frame):
+                # Clear axes
+                for ax in [ax1, ax2, ax3, ax4]:
+                    ax.clear()
+
+                # Plot 1: Original Signal
+                window = 200
+                start_idx = frame % (len(self.t) - window)
+                end_idx = start_idx + window
+
+                ax1.plot(self.t[start_idx:end_idx],
+                        self.signal[start_idx:end_idx],
+                        'b-', label='Original Signal')
+                ax1.set_title('Time Domain Signal')
+                ax1.set_xlabel('Time')
+                ax1.set_ylabel('Amplitude')
+                ax1.legend()
+                ax1.grid(True)
+
+                # Plot 2: Frequency Spectrum
+                positive_freq_mask = self.freqs >= 0
+                ax2.plot(self.freqs[positive_freq_mask],
+                        np.abs(self.fft_vals)[positive_freq_mask],
+                        'r-', label='Magnitude Spectrum')
+                ax2.set_title('Frequency Spectrum')
+                ax2.set_xlabel('Frequency (Hz)')
+                ax2.set_ylabel('Magnitude')
+                ax2.grid(True)
+
+                # Plot 3: Phase Spectrum
+                ax3.plot(self.freqs[positive_freq_mask],
+                        np.angle(self.fft_vals)[positive_freq_mask],
+                        'g-', label='Phase Spectrum')
+                ax3.set_title('Phase Spectrum')
+                ax3.set_xlabel('Frequency (Hz)')
+                ax3.set_ylabel('Phase (radians)')
+                ax3.grid(True)
+
+                # Plot 4: Signal Reconstruction
+                reconstruction_idx = min(frame // 2, len(self.reconstructions) - 1)
+                ax4.plot(self.t[start_idx:end_idx],
+                        self.signal[start_idx:end_idx],
+                        'b-', alpha=0.5, label='Original')
+                ax4.plot(self.t[start_idx:end_idx],
+                        self.reconstructions[reconstruction_idx][start_idx:end_idx],
+                        'r-', label=f'Reconstruction\n({reconstruction_idx+1} frequencies)')
+                ax4.set_title('Signal Reconstruction')
+                ax4.set_xlabel('Time')
+                ax4.set_ylabel('Amplitude')
+                ax4.legend()
+                ax4.grid(True)
+
+                plt.tight_layout()
+
+            anim = FuncAnimation(fig, animate,
+                               frames=200,  # Adjust for smoothness
+                               interval=100,  # 100ms between frames
+                               repeat=True)
+            return anim
+
+    # Create and save animation
     visualizer = FourierVisualizer()
-
     anim = visualizer.create_animation()
-
     anim.save('fourier_transform.gif', writer='pillow', fps=10)
-
     plt.close()
 
+
+def notebook_step_019() -> None:
     data = pd.Series([112, 118, 132, 129, 121, 135, 148, 148, 136, 119, 104, 118] * 10, name='Sales')
 
     data.index = pd.date_range(start='2010-01-01', periods=len(data), freq='M')
@@ -1430,6 +1498,14 @@ def main() -> None:
 
     plot_model(best_multivariate_model, plot='forecast')
 
+
+def pip_install_pycaret_jupyter_only() -> None:
+    # !pip install pycaret  # Jupyter-only
+    # pip install pycaret  # Jupyter-only
+
+
+    pass
+def create_sample_data() -> None:
     data = pd.Series([112, 118, 132, 129, 121, 135, 148, 148, 136, 119, 104, 118] * 10, name='Sales')
 
     data.index = pd.date_range(start='2010-01-01', periods=len(data), freq='M')
@@ -1482,6 +1558,8 @@ def main() -> None:
 
     plot_model(best_multivariate_model, plot='forecast')
 
+
+def create_sample_data_2() -> None:
     data = pd.Series([112, 118, 132, 129, 121, 135, 148, 148, 136, 119, 104, 118] * 10, name='Sales')
 
     data.index = pd.date_range(start='2010-01-01', periods=len(data), freq='M')
@@ -1528,6 +1606,14 @@ def main() -> None:
 
     plot_model(best_multivariate_model, plot='forecast')
 
+
+def pip_show_pycaret_jupyter_only() -> None:
+    # !pip show pycaret  # Jupyter-only
+    # pip show pycaret  # Jupyter-only
+
+
+    pass
+def create_sample_data_3() -> None:
     data = pd.Series([112, 118, 132, 129, 121, 135, 148, 148, 136, 119, 104, 118] * 10, name='Sales')
 
     data.index = pd.date_range(start='2010-01-01', periods=len(data), freq='M')
@@ -1576,6 +1662,8 @@ def main() -> None:
 
     exp_multi.plot_model(best_multivariate_model, plot='forecast')
 
+
+def generate_sample_data_3() -> None:
     visualizer = BayesianARIMAVisualizer()
 
     anim = visualizer.create_animation()
@@ -1584,6 +1672,14 @@ def main() -> None:
 
     plt.close()
 
+
+def pip_install_pmdarima_jupyter_only() -> None:
+    # !pip install pmdarima  # Jupyter-only
+    # pip install pmdarima  # Jupyter-only
+
+
+    pass
+def simulate_data_with_volatility_clustering() -> None:
     visualizer = ARCHVisualizer()
 
     anim = visualizer.create_animation()
@@ -1592,6 +1688,14 @@ def main() -> None:
 
     plt.close()
 
+
+def pip_install_arch_jupyter_only() -> None:
+    # !pip install arch  # Jupyter-only
+    # pip install arch  # Jupyter-only
+
+
+    pass
+def generate_rolling_forecasts() -> None:
     visualizer = ARCHVisualizer()
 
     anim = visualizer.create_animation()
@@ -1600,6 +1704,8 @@ def main() -> None:
 
     plt.close()
 
+
+def generate_sample_data_4() -> None:
     visualizer = SVARVisualizer()
 
     anim = visualizer.create_animation()
@@ -1608,6 +1714,8 @@ def main() -> None:
 
     plt.close()
 
+
+def simulate_a_two_variable_system() -> None:
     visualizer = SVARVisualizer()
 
     anim = visualizer.create_animation()
@@ -1616,6 +1724,8 @@ def main() -> None:
 
     plt.close()
 
+
+def set_random_seed_for_reproducibility_2() -> None:
     np.random.seed(42)
 
     n = 1000
@@ -1668,6 +1778,8 @@ def main() -> None:
 
     plt.show()
 
+
+def generate_sample_data_5() -> None:
     visualizer = BayesianARIMAVisualizer()
 
     anim = visualizer.create_animation()
@@ -1675,6 +1787,42 @@ def main() -> None:
     anim.save('bayesian_arima_comparison.gif', writer='pillow', fps=5)
 
     plt.close()
+
+
+def main() -> None:
+    notebook_step_001()
+    assuming_you_have_your_taxi_data_in_a_dataframe()
+    visualizing_time_series_cross_validation_methods()
+    generate_sample_time_series_data()
+    plot_full_dataset()
+    plot_full_dataset_2()
+    generate_two_related_time_series()
+    generate_true_trajectory()
+    set_random_seed_for_reproducibility()
+    don_t_use_notebook_markdown()
+    generate_sample_data()
+    generate_sample_data_2()
+    generate_larger_sample_data()
+    generate_true_trajectory_2()
+    generate_true_trajectory_3()
+    generate_synthetic_time_series_data_for_differen()
+    parameters()
+    time_domain_parameters()
+    notebook_step_019()
+    pip_install_pycaret_jupyter_only()
+    create_sample_data()
+    create_sample_data_2()
+    pip_show_pycaret_jupyter_only()
+    create_sample_data_3()
+    generate_sample_data_3()
+    pip_install_pmdarima_jupyter_only()
+    simulate_data_with_volatility_clustering()
+    pip_install_arch_jupyter_only()
+    generate_rolling_forecasts()
+    generate_sample_data_4()
+    simulate_a_two_variable_system()
+    set_random_seed_for_reproducibility_2()
+    generate_sample_data_5()
 
 if __name__ == "__main__":
     main()
