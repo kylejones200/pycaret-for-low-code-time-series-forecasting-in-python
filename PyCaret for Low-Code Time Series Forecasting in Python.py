@@ -35,7 +35,6 @@ def main():
 
     import warnings
 
-    warnings.filterwarnings("ignore")
     import logging
 
     logging.disable(logging.CRITICAL)
