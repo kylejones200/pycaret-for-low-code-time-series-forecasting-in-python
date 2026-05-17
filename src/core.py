@@ -39,14 +39,16 @@ def plot_pycaret_forecast(
     plot: bool = False,
 ):
     """Plot PyCaret forecast"""
-    if plot:
-        fig, ax = plt.subplots(figsize=(10, 6))
+    if not plot:
+        return
 
-        ax.plot(actual, label="Actual", color="#4A90A4", linewidth=1.2)
-        ax.plot(predicted, label="Predicted", color="#D4A574", linewidth=1.2)
-        ax.set_xlabel("Time")
-        ax.set_ylabel("Value")
-        ax.legend(loc="best")
+    fig, ax = plt.subplots(figsize=(10, 6))
 
-        plt.savefig(output_path, dpi=100, bbox_inches="tight")
-        plt.close()
+    ax.plot(actual, label="Actual", color="#4A90A4", linewidth=1.2)
+    ax.plot(predicted, label="Predicted", color="#D4A574", linewidth=1.2)
+    ax.set_xlabel("Time")
+    ax.set_ylabel("Value")
+    ax.legend(loc="best")
+
+    plt.savefig(output_path, dpi=100, bbox_inches="tight")
+    plt.close()

@@ -42,3 +42,11 @@ PyCaret provides:
 - By default, generates synthetic time series data.
 - PyCaret requires proper time series format (datetime index).
 - Full PyCaret functionality requires additional setup steps.
+
+## Disclaimer
+
+Educational/demo code only. Not financial, safety, or engineering advice. Use at your own risk. Verify results independently before any production or operational use.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
