@@ -3,6 +3,7 @@ name = "pycaret-for-low-code-time-series-forecasting-in-py"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "pydantic>=2.10.0",
     "matplotlib>=3.7.5",
     "numpy>=1.26.4",
     "pandas>=2.1.4",
@@ -11,3 +12,7 @@ dependencies = [
     "pyyaml>=6.0.3",
     "scikit-learn>=1.4.2",
 ]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

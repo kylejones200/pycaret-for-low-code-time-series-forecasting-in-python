@@ -25,41 +25,31 @@ def create_a_sample_time_series_dataset() -> None:
     data = pd.Series(
         [112, 118, 132, 129, 121, 135, 148, 148, 136, 119, 104, 118] * 10, name="Sales"
     )
-
     data.index = pd.date_range(start="2010-01-01", periods=len(data), freq="M")
-
     df = data.to_frame()
-
     df.head()
 
 
 def notebook_step_004() -> None:
     warnings.filterwarnings("ignore")
-
-    logging.disable(logging.CRITICAL)
+    for _logger_name in ("pycaret", "matplotlib", "urllib3"):
+        logging.getLogger(_logger_name).setLevel(logging.WARNING)
 
 
 def initialize_pycaret() -> None:
-    s = setup(data=df, target="Sales", session_id=123, seasonal_period=12)
+    setup(data=df, target="Sales", session_id=123, seasonal_period=12)
 
 
 def create_a_sample_time_series_dataset_2() -> None:
     data = pd.Series(
         [112, 118, 132, 129, 121, 135, 148, 148, 136, 119, 104, 118] * 10, name="Sales"
     )
-
     data.index = pd.date_range(start="2010-01-01", periods=len(data), freq="M")
-
     df = data.to_frame()
-
     exp = TSForecastingExperiment()
-
     exp.setup(data=df, target="Sales", fold=3, seasonal_period=12)
-
     best_model = exp.compare_models()
-
     future_forecasts = exp.predict_model(best_model, fh=12)
-
     print(future_forecasts)
 
 
@@ -67,31 +57,24 @@ def create_a_sample_time_series_dataset_3() -> None:
     data = pd.Series(
         [112, 118, 132, 129, 121, 135, 148, 148, 136, 119, 104, 118] * 10, name="Sales"
     )
-
     data.index = pd.date_range(start="2010-01-01", periods=len(data), freq="M")
-
     df = data.to_frame()
-
-    s = setup(data=df, target="Sales", train_size=0.8, fold=3, seasonal_period="M")
-
+    setup(data=df, target="Sales", train_size=0.8, fold=3, seasonal_period="M")
     best_model = compare_models()
-
     future_forecasts = predict_model(best_model, fh=12)
-
     print(future_forecasts)
 
 
 def compare_models() -> None:
-    best_model = compare_models()
+    compare_models()
 
 
 def tune_the_best_model() -> None:
-    tuned_model = tune_model(best_model)
+    tune_model(best_model)
 
 
 def forecast_the_next_12_months() -> None:
     future_forecast = predict_model(tuned_model, fh=12)
-
     print(future_forecast)
 
 
@@ -101,7 +84,6 @@ def plot_forecasts() -> None:
 
 def get_backtesting_metrics() -> None:
     backtest_metrics = pull()
-
     print(backtest_metrics)
 
 
@@ -110,7 +92,7 @@ def inspect_generated_features() -> None:
 
 
 def stack_the_top_3_models() -> None:
-    stacked_model = stack_models(top_n=3)
+    stack_models(top_n=3)
 
 
 def save_the_model() -> None:
@@ -118,13 +100,12 @@ def save_the_model() -> None:
 
 
 def load_the_model() -> None:
-    loaded_model = load_model("time_series_model")
+    load_model("time_series_model")
 
 
 def add_a_secondary_feature_e_g_marketing_spend() -> None:
     df["Marketing_Spend"] = [50 + i % 10 for i in range(len(df))]
-
-    s = setup(data=df, target="Sales", session_id=123)
+    setup(data=df, target="Sales", session_id=123)
 
 
 def main() -> None:

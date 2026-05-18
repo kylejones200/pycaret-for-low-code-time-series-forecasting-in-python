@@ -1,27 +1,14 @@
 """Auto-split from legacy monolithic script."""
 
-from arch import arch_model
-from datetime import datetime
-from matplotlib.animation import FuncAnimation
-from matplotlib.animation import FuncAnimation, PillowWriter
-from matplotlib.patches import Rectangle
-from pmdarima import auto_arima
-from pycaret.time_series import TSForecastingExperiment
-from pycaret.time_series import setup, compare_models, tune_model, predict_model, plot_model, pull, save_model, load_model
-from pycaret.time_series import stack_models
-from scipy.stats import multivariate_normal
-from sklearn.preprocessing import StandardScaler
-from statsmodels.tsa.api import VAR
-import arviz as az
-import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import pymc as pm
 import seaborn as sns
+from matplotlib.animation import FuncAnimation
+from statsmodels.tsa.api import VAR
+
 
 class SVARVisualizer:
-
     def __init__(self):
         np.random.seed(42)
         self.n = 200
@@ -36,7 +23,7 @@ class SVARVisualizer:
         for t in range(1, self.n):
             gdp[t] = 0.5 * gdp[t - 1] + 0.1 * inf[t - 1] + eps1[t]
             inf[t] = 0.2 * gdp[t - 1] + 0.7 * inf[t - 1] + eps2[t]
-        self.data = pd.DataFrame({'GDP': gdp, 'Inflation': inf})
+        self.data = pd.DataFrame({"GDP": gdp, "Inflation": inf})
 
     def fit_models(self):
         self.var_model = VAR(self.data)
@@ -65,7 +52,7 @@ class SVARVisualizer:
     def _calculate_fevd(self):
         n_vars = len(self.data.columns)
         fevd = np.zeros((self.irf_periods, n_vars, n_vars))
-        cum_effects = np.cumsum(self.irf ** 2, axis=0)
+        cum_effects = np.cumsum(self.irf**2, axis=0)
         for t in range(self.irf_periods):
             total_var = np.sum(cum_effects[t], axis=1)
             for i in range(n_vars):
@@ -86,23 +73,41 @@ class SVARVisualizer:
             start_idx = frame % (self.n - window)
             end_idx = start_idx + window
             for col in self.data.columns:
-                ax1.plot(self.data.index[start_idx:end_idx], self.data[col][start_idx:end_idx], label=col)
-            ax1.set_title('Time Series Data')
+                ax1.plot(
+                    self.data.index[start_idx:end_idx],
+                    self.data[col][start_idx:end_idx],
+                    label=col,
+                )
+            ax1.set_title("Time Series Data")
             ax1.legend()
             ax1.grid(True)
             response_var = frame % 2
             shock_var = frame // 2 % 2
-            var_names = ['GDP', 'Inflation']
+            var_names = ["GDP", "Inflation"]
             irf_data = self.irf[:, response_var, shock_var]
-            ax2.plot(range(len(irf_data)), irf_data, 'b-', marker='o')
-            ax2.fill_between(range(len(irf_data)), irf_data - 0.2, irf_data + 0.2, alpha=0.3)
-            ax2.set_title(f'IRF: Response of {var_names[response_var]} to {var_names[shock_var]} shock')
-            ax2.set_xlabel('Periods')
+            ax2.plot(range(len(irf_data)), irf_data, "b-", marker="o")
+            ax2.fill_between(
+                range(len(irf_data)), irf_data - 0.2, irf_data + 0.2, alpha=0.3
+            )
+            ax2.set_title(
+                f"IRF: Response of {var_names[response_var]} to {var_names[shock_var]} shock"
+            )
+            ax2.set_xlabel("Periods")
             ax2.grid(True)
             current_fevd = self.fevd[frame % self.irf_periods]
-            sns.heatmap(current_fevd, annot=True, fmt='.2f', xticklabels=var_names, yticklabels=var_names, ax=ax3, cmap='coolwarm', vmin=0, vmax=1)
-            ax3.set_title(f'FEVD at horizon {frame % self.irf_periods + 1}')
+            sns.heatmap(
+                current_fevd,
+                annot=True,
+                fmt=".2f",
+                xticklabels=var_names,
+                yticklabels=var_names,
+                ax=ax3,
+                cmap="coolwarm",
+                vmin=0,
+                vmax=1,
+            )
+            ax3.set_title(f"FEVD at horizon {frame % self.irf_periods + 1}")
             plt.tight_layout()
+
         anim = FuncAnimation(fig, animate, frames=80, interval=200, repeat=True)
         return anim
-
